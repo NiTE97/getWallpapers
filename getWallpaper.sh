@@ -1,28 +1,69 @@
 #!/bin/bash
 
-link="https://source.unsplash.com/random/?"
+#Method declarations
+function createDirs(){
+	for (( i = 0; i < 30; i++ )); do
+		if [ ! -d "$dir$i" ]; then
+			dir=${dir}${i}
+			mkdir -p $dir;
+			cd $dir
+			break;
+		fi
+	done
+}
+
+function usage(){
+	echo "Usage: getWallpaper.sh TOPIC [-r]";
+	exit 1;
+}
+
+parseArguments(){
+	if [[ $1 == '' ]]; then
+		echo "Looking for random wallpapers...";
+		createDirs;
+	elif [[ $1 == '-r' ]]; then
+		echo "Looking for random wallpapers and rotating them...";
+		createDirs;
+		rotate="true"
+	elif [[ $2 == '-r' ]]; then
+		topic=$1;
+		echo "Looking for $topic wallpapers and rotating them..."
+		link=${link}"?"$topic;
+		mkdir -p $dir$topic;
+		cd $dir$topic;
+		rotate="true"
+	elif [[ $1 == '--help' ]]; then
+		usage;
+	else
+		topic=$1;
+		echo "Looking for $topic wallpapers...";
+		link=${link}"?$topic";
+		mkdir -p $dir$topic;
+		cd $dir$topic;
+		
+	fi
+}
+
+#Variables for target directory and unsplash link
+link="https://source.unsplash.com/random/"
 dir="/home/${USER}/Documents/Wallpapers/"
+rotate="false"
 
-topic=$1
+#Check if Arguments are valid
+parseArguments $1 $2;
 
-mkdir $dir$topic
-cd $dir$topic
-
-if [[ $topic == '' ]]; then
-	echo "Usage: ./getWallpaper.sh TOPIC [-r]"
-	exit 1
-fi
 
 for (( i = 0; i < 30; i++ )); do
-	echo "$i / 29"
-	wget -q -O "$i.jpg" -P "$dir$topic" "$link$topic"
+	echo "$i / 29;"
+	wget -q -O "$i.jpg" -P "$dir$topic" "$link$";
 	
-	if [[ $2 != '-r' ]]; then
-		width=$(identify -format '%w' "$dir$topic/$i.jpg")
-		height=$(identify -format '%h' "$dir$topic/$i.jpg")
+	if [[ $rotate == 'true' ]]; then
+		width=$(identify -format '%w' "$dir$topic/$i.jpg");
+		height=$(identify -format '%h' "$dir$topic/$i.jpg");
 
 		if [[ $width -lt $height ]]; then
-			convert "$dir$topic/$i.jpg" -rotate 90 "$dir$topic/$i.jpg"	
+			convert "$dir$topic/$i.jpg" -rotate 90 "$dir$topic/$i.jpg";	
 		fi
 	fi
 done
+
