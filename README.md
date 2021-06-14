@@ -3,9 +3,9 @@ Script to download random Wallpapers based on a specified search term.
 
 ## Installation
 
-git clone https://github.com/NiTE97/getWallpapers<br>
-cd getWallpapers<br>
-./getWallpapers.sh<br>
+	git clone https://github.com/NiTE97/getWallpapers<br>
+	cd getWallpapers<br>
+	./getWallpapers.sh<br>
 
 ## Usage
 
