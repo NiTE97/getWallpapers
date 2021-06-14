@@ -5,8 +5,8 @@ function createDirs(){
 	for (( i = 0; i < 30; i++ )); do
 		if [ ! -d "$dir$i" ]; then
 			dir=${dir}${i}
-			mkdir -p $dir;
-			cd $dir
+			mkdir -p "$dir";
+			cd "$dir" || exit;
 			break;
 		fi
 	done
@@ -29,8 +29,8 @@ parseArguments(){
 		topic=$1;
 		echo "Looking for $topic wallpapers and rotating them..."
 		link=${link}"?"$topic;
-		mkdir -p $dir$topic;
-		cd $dir$topic;
+		mkdir -p "$dir""$topic";
+		cd "$dir""$topic" || exit;
 		rotate="true"
 	elif [[ $1 == '--help' ]]; then
 		usage;
@@ -38,8 +38,8 @@ parseArguments(){
 		topic=$1;
 		echo "Looking for $topic wallpapers...";
 		link=${link}"?$topic";
-		mkdir -p $dir$topic;
-		cd $dir$topic;
+		mkdir -p "$dir""$topic";
+		cd "$dir""$topic" || exit;
 		
 	fi
 }
@@ -50,7 +50,7 @@ dir="/home/${USER}/Documents/Wallpapers/"
 rotate="false"
 
 #Check if Arguments are valid
-parseArguments $1 $2;
+parseArguments "$1" "$2";
 
 
 for (( i = 0; i < 30; i++ )); do
