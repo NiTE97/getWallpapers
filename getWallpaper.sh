@@ -52,10 +52,24 @@ rotate="false"
 #Check if Arguments are valid
 parseArguments "$1" "$2";
 
+#Create imgsid array
+declare -A imgsid
 
 for (( i = 0; i < 30; i++ )); do
 	echo "$i / 29;"
-	wget -q -O "$i.jpg" -P "$dir$topic" "$link$";
+
+    #Get download link and picture id
+	dllink=`curl -s $link | grep -oP 'href="\K[^"]+' | sed -e 's/\(ixlib.*\)*$//g'`
+	id=`echo "$dllink" | sed -n 's:.*photo\-\(.*\)?.*:\1:p'`
+
+    #If array "knows" the id continue, else add it into the array
+	if [[ "${imgsid[@]}" =~ "${id}" ]]; then
+        continue
+    else
+	    imgsid[$i]=$id
+    fi
+
+	wget -q -O "$i.jpg" -P "$dir$topic" "$dllink$";
 	
 	if [[ $rotate == 'true' ]]; then
 		width=$(identify -format '%w' "$dir$topic/$i.jpg");
